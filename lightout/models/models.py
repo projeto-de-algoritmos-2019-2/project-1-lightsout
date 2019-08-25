@@ -44,8 +44,8 @@ class Game:
         state of the board's cells. This method calculates and returns this 
         number
         """
-        
-        return sum([(2 ** cell.value) * cell.is_on for cell in self.cells])
+        self.id = sum([(2**cell.value) * cell.is_on for cell in self.cells])
+        return self.id
 
     def possible_moves(self):
         """
