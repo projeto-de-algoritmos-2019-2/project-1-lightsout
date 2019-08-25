@@ -1,4 +1,6 @@
-from .models import Cell, Game
+import os
+import pickle
+from models import Cell, Game
 from random import choice
 from collections import defaultdict, deque
 
@@ -40,19 +42,29 @@ class LightOut:
     
     POSSIBLE_GAMES = defaultdict(list)
 
-    def __init__(self, size=3):
-        self.game = LightOut.random_game(size)
-        self.size = size
-    
     def random_game(size):
         """
         This class returns a random game based on the desired board size.
         """
         if not LightOut.POSSIBLE_GAMES[size]:
-            board_list = LightOut.compute_all_possible_games(size)
-            LightOut.POSSIBLE_GAMES[size] = board_list
+            
+            file_name = f'size{size}grid.pkl'
+            path = os.path.join('static', file_name)
+
+            try:
+                game_list = pickle.load(open(path, 'rb'))
+                LightOut.POSSIBLE_GAMES[size] = game_list
+            
+            except FileNotFoundError:
+                game_list = LightOut.compute_all_possible_games(size)
+                LightOut.POSSIBLE_GAMES[size] = game_list
+                pickle.dump( game_list, open( path, "wb" ) )
         
         
+        for game in LightOut.POSSIBLE_GAMES[size]:
+            if game.difficulty == 1:
+                return game
+
         return choice(LightOut.POSSIBLE_GAMES[size])
     
     def compute_all_possible_games(size):
@@ -74,6 +86,13 @@ class LightOut:
 
         return possible_games
     
+    def get_moves_to_win(game):
+        """
+        returns a list of the sequence of cells that must be pressed to win 
+        the game as quickly as possible
+        """
+        pass
+
     def bfs(game):
         """
         Return all possible games derived from the game submitted as a 
