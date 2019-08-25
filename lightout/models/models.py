@@ -46,6 +46,19 @@ class Game:
         """
         self.id = sum([(2**cell.value) * cell.is_on for cell in self.cells])
         return self.id
+    
+    def is_over(self):
+        """
+        Checks if all cells are in the same state (on or off)
+        """
+        
+        max_id = sum([2**i for i in range(self.size**2)])
+        id = self.generate_id()
+
+        if id == 0 or id == max_id:
+            return True
+        
+        return False
 
     def possible_moves(self):
         """
@@ -99,6 +112,9 @@ class Game:
         for i,_ in enumerate(neighbors):
             j = neighbors[i]
             cells[j].is_on = not cells[j].is_on
+
+        # needed to toggle visual on front end
+        return neighbors
     
     def __hash__(self):
         return hash(self.id)
