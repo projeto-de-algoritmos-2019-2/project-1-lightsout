@@ -20,12 +20,14 @@ from timer import Timer
 
 class GameGrid(GridLayout):
     
-    def __init__(self, size, **kwargs):
+    def __init__(self, size, difficulty, **kwargs):
         super(GameGrid, self).__init__(**kwargs)
-        
-        self.game = LightOut.random_game(size=size)
-        self.original_game = deepcopy(self.game)
 
+        self._size = size
+        self.difficulty = difficulty
+
+        self.game = self.generate_new_game()
+        
         self.cols = self.game.size
         self.spacing = self.game.size
 
@@ -33,18 +35,21 @@ class GameGrid(GridLayout):
         self.timer = Timer()
 
         self.manager = None
-        self.player_name = None
         self.scheduled = None
+        self.player_name = None
         self.toggled_last = None
 
         with self.canvas.before:
             Color(0.75, 0.75, 0.75, 0.75)
             self.rect = Rectangle(size=self.size, pos=self.pos)
-        self.bind(pos=self.update_rect, size=self.update_rect)
 
+        self.bind(pos=self.update_rect, size=self.update_rect)
         self.add_lights()
 
     def add_lights(self):
+        if hasattr(self, 'lights'):
+            self.remove_lights()
+
         self.lights = []
         for cell in self.game.cells:
             
@@ -56,11 +61,6 @@ class GameGrid(GridLayout):
 
             self.add_widget(light)
             self.lights.append(light)
-        
-    def restart(self):
-        self.remove_lights()
-        self.game = deepcopy(self.original_game)
-        self.add_lights()
     
     def remove_lights(self):
         for light in self.lights:
@@ -85,6 +85,8 @@ class GameGrid(GridLayout):
     
     def check_if_completed(self):
         if self.game.is_over():
+
+            self.difficulty += 1
             
             self.timer.stop(self.scheduled)
             current=(self.player_name, self.moves.count, self.timer.text[6:])
@@ -125,7 +127,12 @@ class GameGrid(GridLayout):
             self.popup.open()
 
     def new_game(self, btn):
-        self.load()
+        self.timer.reset()
+        self.moves.reset()
+
+        self.generate_new_game()
+        self.add_lights()
+
         self.scheduled = self.timer.start()
         self.popup.dismiss()
     
@@ -137,11 +144,22 @@ class GameGrid(GridLayout):
         self.manager.transition.direction = 'right'
         self.manager.current = 'menu'
     
-    def load(self):
+    def generate_new_game(self):
+        self.game = LightOut.random_game(self._size, self.difficulty)
+        self.original_game = deepcopy(self.game)
+        return self.game
+    
+    def restart(self):
         self.timer.reset()
         self.moves.reset()
         
-        self.game = LightOut.random_game(self.game.size)
+        self.game = deepcopy(self.original_game)
+
+        self.add_lights()
+
+    def load(self):
+        self.timer.reset()
+        self.moves.reset()
 
         for light in self.lights:
             id = int(light.id)
@@ -153,9 +171,15 @@ class GameGrid(GridLayout):
             light.initialize(is_on=False)
     
     def get_next_best_move(self):
-        moves = LightOut.get_moves_to_win(self.game)
+        cell_id = LightOut.best_cell_to_click(self.game)
+
+        # Bug -> Can not find the right path to win the game
+        if cell_id is None:
+            print(cell_id)
+            print("BUG BUG BUG")
+            return
         
         return Blinking(
-            self.lights[moves[0]], 
-            Clock.schedule_interval(self.lights[moves[0]].blink, 0.5)
+            self.lights[cell_id], 
+            Clock.schedule_interval(self.lights[cell_id].blink, 0.5)
         )
