@@ -26,7 +26,7 @@ class LightsOut(App):
         self.icon = os.path.join('static', 'bulb.ico')
 
         sm = Manager()
-        game_screen = GameScreen(name='game', size=3)
+        game_screen = GameScreen(name='game', size=5, difficulty=1)
         game_screen.game_grid.manager = sm
         sm.game = game_screen.game_grid
 
