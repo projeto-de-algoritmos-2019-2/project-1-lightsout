@@ -4,6 +4,8 @@ from models import Cell, Game
 from random import choice
 from collections import defaultdict, deque
 
+from random import randint
+
 class LightOut:
     """
     This class is responsible for generating a random game according to the 
@@ -41,14 +43,18 @@ class LightOut:
     """
     
     POSSIBLE_GAMES = defaultdict(list)
-
-    def random_game(size):
+            
+    def random_game(size, difficulty=1):
         """
         This class returns a random game based on the desired board size.
         """
+
+        difficulty = min(5, difficulty)
+        size = min(4, size)
+
         if not LightOut.POSSIBLE_GAMES[size]:
             
-            file_name = f'size{size}grid.pkl'
+            file_name = 'size{0}grid.pkl'.format(size)
             path = os.path.join('static', file_name)
 
             try:
@@ -60,12 +66,16 @@ class LightOut:
                 LightOut.POSSIBLE_GAMES[size] = game_list
                 pickle.dump( game_list, open( path, "wb" ) )
         
+        # print('difficulty: {0}'.format(difficulty))
         
-        for game in LightOut.POSSIBLE_GAMES[size]:
-            if game.difficulty == 1:
-                return game
-
+        games_diff = [game for game in LightOut.POSSIBLE_GAMES[size] 
+                        if game.difficulty == difficulty]
+        
+        if games_diff:
+            return choice(games_diff)
+        
         return choice(LightOut.POSSIBLE_GAMES[size])
+        
     
     def compute_all_possible_games(size):
         """
@@ -75,29 +85,63 @@ class LightOut:
 
         possible_games = []
 
-        # cells_off = LightOut.get_list_of_cells(size, cells_on=False)
-        # cells_on = LightOut.get_list_of_cells(size, cells_on=True)
-
         gameOff = Game(size=size, cells_on=False)
         gameOn = Game(size=size, cells_on=True)
 
         possible_games += LightOut.bfs(gameOff)
         possible_games += LightOut.bfs(gameOn)
 
+        # print('Qnt Valid Games: {0}'.format(len(possible_games)))
         return possible_games
     
-    def get_moves_to_win(game):
+    def best_cells_to_click(orig_game):
         """
         returns a list of the sequence of cells that must be pressed to win 
         the game as quickly as possible
         """
-        pass
 
-    def bfs(game):
+        # print('orig_game.moves_required: {0}'.format(orig_game.moves_required))
+
+        visited_games_id = set()
+        visited_games_id.add(orig_game.id)
+
+        orig_game.cells_id_pressed = []
+        
+        queue = deque()
+        queue.append(orig_game)
+
+        while queue:
+
+            game = queue.popleft()
+
+            if len(game.cells_id_pressed) > orig_game.moves_required:
+                continue
+            
+            for next_game in game.possible_moves():
+                if next_game.id in visited_games_id:
+                    continue
+                
+                ng = next_game
+                ng.cells_id_pressed.append(next_game.last_position_pressed)
+                    
+                if next_game.is_over():
+                    # print(next_game)
+                    return next_game.cells_id_pressed
+
+                
+                visited_games_id.add(next_game.id)
+                queue.append(next_game)
+        
+        return None
+        
+    def bfs(game, shortest_way=False):
         """
         Return all possible games derived from the game submitted as a 
         parameter
         """
+
+        # moves_required = defaultdict(int)
+
         valid_games = set()
         visited_games_id = set()
 
@@ -111,14 +155,22 @@ class LightOut:
 
         while queue:
             game = queue.popleft()
+            
+            # print(len(queue), 'moves req: {0}'.format(game.moves_required))
 
             for next_game in game.possible_moves():
+
                 if next_game.id in visited_games_id:
                     continue
+                
+                # if moves_required[next_game.moves_required] > 25:
+                    # continue
+                    
+                # moves_required[next_game.moves_required] += 1
                 
                 valid_games.add(game)
                 visited_games_id.add(next_game.id)
 
                 queue.append(next_game)
-        
+    
         return valid_games
