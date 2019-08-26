@@ -9,12 +9,17 @@ from game_grid import GameGrid
     
 class GameScreen(Screen):
 
-    def __init__(self, size, **kwargs):
+    def __init__(self, size, difficulty=1, **kwargs):
         super(GameScreen, self).__init__(**kwargs)
 
         self.blinking = None
         self.pressed = False
-        self.game_grid = GameGrid(size=size, size_hint_min_y=620)
+
+        self.game_grid = GameGrid (
+            size = size, 
+            difficulty = difficulty,
+            size_hint_min_y = 620
+        )
 
         header = BoxLayout(orientation='horizontal')
         header.add_widget(self.game_grid.timer)
@@ -35,8 +40,8 @@ class GameScreen(Screen):
 
         self.add_widget(layout)
     
-    def on_pre_enter(self):
-        self.game_grid.load()
+    # def on_pre_enter(self):
+    #     self.game_grid.load()
     
     def on_enter(self):
         self.game_grid.scheduled = self.game_grid.timer.start()
@@ -46,7 +51,7 @@ class GameScreen(Screen):
         self.parent.current = 'menu'
 
     def hint(self, btn):
-        if self.blinking is not None:
+        if self.blinking is None:
             self.blinking = self.game_grid.get_next_best_move()
     
     def unsched(self):
@@ -57,10 +62,9 @@ class GameScreen(Screen):
     
     def restart(self, btn):
         self.game_grid.timer.stop(self.game_grid.scheduled)
-        self.game_grid.load()
+        self.game_grid.scheduled = self.game_grid.timer.start()
+        self.game_grid.restart()
         
         if self.blinking:
             self.unsched()
         
-        self.game_grid.scheduled = self.game_grid.timer.start()
-        self.game_grid.restart()
