@@ -104,6 +104,8 @@ class Game:
         This method toggles the state of the cell at the set position and 
         all its neighbors.
         """
+        
+        self.last_position_pressed = position
 
         self.cells[position].is_on = not self.cells[position].is_on
         neighbors = self.cells[position].neighbors
@@ -123,12 +125,16 @@ class Game:
         return self.id == other.id
     
     def __repr__(self):
-        
+        out = ''
         c = self.cells
-        return f'{c[0].is_on, c[1].is_on, c[2].is_on}\n' + \
-               f'{c[3].is_on, c[4].is_on, c[5].is_on}\n' + \
-               f'{c[6].is_on, c[7].is_on, c[8].is_on}\n'
-        
+
+        for i in range(self.size**2):
+            if i and i%self.size==0:
+                out += '\n'
+            out += f'{c[i].is_on}, '
+            
+        return out + '\n'
+
     def create_list_of_cells(size, cells_on=False):
         """
         This method create a list of cells with their respective values and 
