@@ -177,13 +177,12 @@ class GameGrid(GridLayout):
     def get_next_best_move(self):
         should_recalculate = True
 
-        if len(self.best_clicks) > 0:
-            if self.toggled_last == self.best_clicks[0]:
-                self.best_clicks = self.best_clicks[1:]
-                should_recalculate = False
-                print("Used cached hints")
+        if len(self.best_clicks) > 0 and self.toggled_last == self.best_clicks[0]:
+            self.best_clicks = self.best_clicks[1:]
+            should_recalculate = False
+            print("Used cached hints")
 
-        if should_recalculate:
+        if should_recalculate or len(self.best_clicks) < 1:
             self.best_clicks = LightOut.best_cells_to_click(self.game)
             print("Recalculated Game")
 
