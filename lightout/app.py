@@ -9,9 +9,9 @@ Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager
 
-from game_screen import GameScreen
-from menu_screen import MenuScreen
-from score_screen import ScoreScreen
+from gui.screens.game_screen import GameScreen
+from gui.screens.menu_screen import MenuScreen
+from gui.screens.score_screen import ScoreScreen
 
 class Manager(ScreenManager):
 

@@ -5,7 +5,7 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 
-from game_grid import GameGrid
+from gui.models.game_grid import GameGrid
     
 class GameScreen(Screen):
 

@@ -13,10 +13,10 @@ from kivy.graphics import Color, Rectangle
 
 from lightout import LightOut
 
-from blinking import Blinking
-from light import Light
-from moves import Moves
-from timer import Timer
+from .blinking import Blinking
+from .light import Light
+from .moves import Moves
+from .timer import Timer
 
 class GameGrid(GridLayout):
     

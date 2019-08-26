@@ -8,7 +8,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 
-from table_entry import TableEntry
+from gui.models.table_entry import TableEntry
 
 class ScoreScreen(Screen):
     

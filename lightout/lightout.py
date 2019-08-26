@@ -54,7 +54,7 @@ class LightOut:
 
         if not LightOut.POSSIBLE_GAMES[size]:
             
-            file_name = f'size{size}grid.pkl'
+            file_name = 'size{0}grid.pkl'.format(size)
             path = os.path.join('static', file_name)
 
             try:
@@ -66,7 +66,7 @@ class LightOut:
                 LightOut.POSSIBLE_GAMES[size] = game_list
                 pickle.dump( game_list, open( path, "wb" ) )
         
-        # print(f'difficulty: {difficulty}')
+        # print('difficulty: {0}'.format(difficulty))
         
         games_diff = [game for game in LightOut.POSSIBLE_GAMES[size] 
                         if game.difficulty == difficulty]
@@ -91,7 +91,7 @@ class LightOut:
         possible_games += LightOut.bfs(gameOff)
         possible_games += LightOut.bfs(gameOn)
 
-        # print(f'Qnt Valid Games: {len(possible_games)}')
+        # print('Qnt Valid Games: {0}'.format(len(possible_games)))
         return possible_games
     
     def best_cell_to_click(orig_game):
@@ -100,7 +100,7 @@ class LightOut:
         the game as quickly as possible
         """
 
-        # print(f'orig_game.moves_required: {orig_game.moves_required}')
+        # print('orig_game.moves_required: {0}'.format(orig_game.moves_required))
 
         visited_games_id = set()
         visited_games_id.add(orig_game.id)
@@ -155,7 +155,7 @@ class LightOut:
         while queue:
             game = queue.popleft()
             
-            # print(len(queue), f'moves req: {game.moves_required}')
+            # print(len(queue), 'moves req: {0}'.format(game.moves_required))
 
             for next_game in game.possible_moves():
 

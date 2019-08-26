@@ -131,7 +131,7 @@ class Game:
         for i in range(self.size**2):
             if i and i%self.size==0:
                 out += '\n'
-            out += f'{c[i].is_on}, '
+            out += '{0}, '.format(c[i].is_on)
             
         return out + '\n'
 

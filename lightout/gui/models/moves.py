@@ -8,11 +8,11 @@ class Moves(Label):
     
     def inc(self):
         self.count += 1
-        self.text = f'Moves: {self.count}'
+        self.text = 'Moves: {0}'.format(self.count)
     
     def dec(self):
         self.count -= 1
-        self.text = f'Moves: {self.count}'
+        self.text = 'Moves: {0}'.format(self.count)
     
     def reset(self):
         self.count = 0
