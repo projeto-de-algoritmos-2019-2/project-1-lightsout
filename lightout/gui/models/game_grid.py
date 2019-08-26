@@ -39,6 +39,8 @@ class GameGrid(GridLayout):
         self.player_name = None
         self.toggled_last = None
 
+        self.best_clicks = []
+
         with self.canvas.before:
             Color(0.75, 0.75, 0.75, 0.75)
             self.rect = Rectangle(size=self.size, pos=self.pos)
@@ -72,6 +74,8 @@ class GameGrid(GridLayout):
 
     def toggle(self, light):
         id_ = int(light.id)
+
+        self.toggled_last = id_
 
         self.parent.parent.parent.unsched()
 
@@ -171,7 +175,19 @@ class GameGrid(GridLayout):
             light.initialize(is_on=False)
     
     def get_next_best_move(self):
-        cell_id = LightOut.best_cell_to_click(self.game)
+        should_recalculate = True
+
+        if len(self.best_clicks) > 0:
+            if self.toggled_last == self.best_clicks[0]:
+                self.best_clicks = self.best_clicks[1:]
+                should_recalculate = False
+                print("Used cached hints")
+
+        if should_recalculate:
+            self.best_clicks = LightOut.best_cells_to_click(self.game)
+            print("Recalculated Game")
+
+        cell_id = self.best_clicks[0]
 
         # Bug -> Can not find the right path to win the game
         if cell_id is None:

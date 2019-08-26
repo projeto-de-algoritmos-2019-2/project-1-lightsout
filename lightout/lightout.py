@@ -94,7 +94,7 @@ class LightOut:
         # print('Qnt Valid Games: {0}'.format(len(possible_games)))
         return possible_games
     
-    def best_cell_to_click(orig_game):
+    def best_cells_to_click(orig_game):
         """
         returns a list of the sequence of cells that must be pressed to win 
         the game as quickly as possible
@@ -126,7 +126,8 @@ class LightOut:
                     
                 if next_game.is_over():
                     # print(next_game)
-                    return next_game.cells_id_pressed[0]
+                    return next_game.cells_id_pressed
+
                 
                 visited_games_id.add(next_game.id)
                 queue.append(next_game)
