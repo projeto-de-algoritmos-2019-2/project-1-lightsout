@@ -15,7 +15,7 @@
   <a href="#credits">Credits</a>
 </p>
 
-![screenshot](lightout/static/lightsout.gif)
+<img align='center' src="lightout/static/lightsout.gif">
 
 ## About the project
 
