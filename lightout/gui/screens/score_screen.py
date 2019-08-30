@@ -1,5 +1,8 @@
 import os
-import pickle
+
+import requests
+from firebase import Firebase
+import threading
 
 
 from kivy.uix.button import Button
@@ -9,6 +12,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 
 from gui.models.table_entry import TableEntry
+
 
 class ScoreScreen(Screen):
     
@@ -62,49 +66,43 @@ class ScoreScreen(Screen):
             Button(text='Back', size_hint_max_y=30, on_press=self.back)
         )
 
-        self.add_widget(layout)
+        self.add_widget(layout)    
 
-        try:
-            with open(os.path.join('static', 'scores'), 'rb') as scores:
-                while True:
-                    try:
-                        self.scores.append(pickle.load(scores))
-                    
-                    except EOFError:
-                        break
-        except IOError:
-            pass
-        
-        if self.scores:
-            self.update(self.scores)
-
-        self.sort(self.names)
-    
+    def update_scores_with_firebase(self):
+        config = {
+            "apiKey": "AIzaSyAdo9hLvVbA-KI7kwFlx2vOILV_o5K-dBE",
+            "authDomain": "pa-project-1-graphs.firebaseapp.com",
+            "databaseURL": "https://pa-project-1-graphs.firebaseio.com",
+            "storageBucket": ""
+        }
+        firebase = Firebase(config)
+        db = firebase.database()
+        player_list = db.child("players").get()
+        player_info_list = [player_list.val()[player_key] for player_key in player_list.val()]
+        self.update(player_info_list)
 
     def on_pre_enter(self):
-        self.scores.extend(self.parent.new_scores)
-        self.update(self.parent.new_scores)
+        fb_thread = threading.Thread(target=self.update_scores_with_firebase)
+        fb_thread.start()
 
-        self.sort_ascending(0)
-        self.rearrange()
-        self.parent.new_scores = []
+    def on_leave(self):
+        self.remove_widget(self.table)
+        self.table = GridLayout(cols=3, size_hint_max_y=None)
     
     def back(self, btn):
         self.parent.transition.direction = 'left'
         self.parent.current = 'menu'
     
     def update(self, scores):
-        if self.scores:
+        entries = [TableEntry(score) for score in scores]
 
-            entries = [TableEntry(score) for score in scores]
-
-            self.entries.extend(entries)
-            
-            for entry in entries:
-                self.table.add_widget(entry.name)
-                self.table.add_widget(entry.moves)
-                self.table.add_widget(entry.time)
-                self.table.height += 3 * 20
+        self.entries.extend(entries)
+        
+        for entry in entries:
+            self.table.add_widget(entry.name)
+            self.table.add_widget(entry.moves)
+            self.table.add_widget(entry.time)
+            self.table.height += 3 * 20
             
     def rearrange(self):
         for entry, score in zip(self.entries, self.scores):

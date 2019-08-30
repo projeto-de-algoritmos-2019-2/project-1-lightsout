@@ -1,5 +1,8 @@
 import os
-import pickle
+import requests
+from firebase import Firebase
+import threading
+
 
 from copy import deepcopy
 
@@ -87,6 +90,17 @@ class GameGrid(GridLayout):
         self.moves.inc()
         self.check_if_completed()
     
+    def save_score_thread(self, content):
+        config = {
+            "apiKey": "AIzaSyAdo9hLvVbA-KI7kwFlx2vOILV_o5K-dBE",
+            "authDomain": "pa-project-1-graphs.firebaseapp.com",
+            "databaseURL": "https://pa-project-1-graphs.firebaseio.com",
+            "storageBucket": ""
+        }
+        firebase = Firebase(config)
+        db = firebase.database()
+        db.child("players").push(content)
+
     def check_if_completed(self):
         if self.game.is_over():
 
@@ -94,12 +108,9 @@ class GameGrid(GridLayout):
             
             self.timer.stop(self.scheduled)
             current=(self.player_name, self.moves.count, self.timer.text[6:])
-            self.manager.new_scores.append(current)
 
-            # todo Save score to a file
-            path = os.path.join('static', 'scores')
-            with open(path, 'ab') as scores:
-                pickle.dump(current, scores)
+            fb_thread = threading.Thread(target=self.save_score_thread, args=(current,))
+            fb_thread.start()
 
             options = GridLayout(cols=3)
             
