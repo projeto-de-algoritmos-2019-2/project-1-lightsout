@@ -3,8 +3,6 @@
   <br>
   <a href="lightout/static/logo.png"><img src="lightout/static/logo.png" alt="Lights Out" width="200"></a>
   <br>
-  Lights Out
-  <br>
 </h1>
 
 <h4 align="center"> Project 1 - Algorithm Project</h4>
