@@ -15,19 +15,27 @@
   <a href="#credits">Credits</a>
 </p>
 
-<img align='center' src="lightout/static/lightsout.gif">
+<p align="center">
+  <img src="lightout/static/lightsout.gif">
+</p>
+
 
 ## About the project
 
-This project was developed for the discipline **Algorithm Project** of FGA College in the semester 02/2019.
+This project was developed for the discipline **Algorithm Project** of FGA 
+College in the semester 02/2019.
 
-The main goal was to develop an application that uses **graph theory** to add some feature.
+The main goal was to develop an application that uses **graph theory** to 
+add some feature.
 
 This application was based on the game 'Lights Out' by Tiger Electronics.
 
-The graphic feature was to develop a **hint button** to make the next best move to win the game.
+The graphic feature was to develop a **hint button** to make the next best 
+move to win the game.
 
-This feature is based on the **BFS traversal**. Where the current game is modeled as a graph and each branch is a possible move. The first branch that reaches a winning game returns a list of moves needed to win the current game.
+This feature is based on the **BFS traversal**. Where the current game is 
+modeled as a graph and each branch is a possible move. The first branch that 
+reaches a winning game returns a list of moves needed to win the current game.
 
 ## How To Use
 
@@ -54,8 +62,7 @@ This feature is based on the **BFS traversal**. Where the current game is modele
   $ python app.py
   ```
 
-Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
-
 ## Credits
 
-This project used the [AleksaC](https://github.com/AleksaC/LightsOut) project GUI as base to implement the graph feature 
+This project used the [AleksaC](https://github.com/AleksaC/LightsOut) 
+project GUI as base to implement the graph feature 
